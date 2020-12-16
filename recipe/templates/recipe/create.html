@@ -1,0 +1,33 @@
+{% extends 'recipe/layout.html' %}
+
+
+{% block body %}
+
+    <div class= 'create-form-div'>
+        <h3>Add New Recipe</h3>
+        <div id="form-div">
+            <form action="" method="POST">
+                    <div class="form-group">
+                        <label for="fortitle">Title</label>
+                        <input class="form-control form-control-lg" id='fortitle' type="text" placeholder="Recipe Name">
+                        <label for="exampleFormControlSelect1">Select Category</label>
+                        <select class="form-control" id="exampleFormControlSelect1">
+                            <option selected>Choose...</option>
+                            <option value="1">Chinese</option>
+                            <option value="2">Italian</option>
+                            <option value="3">Pakistani</option>
+                            <option value="4">Indian</option>
+                            <option value="5">Other</option>
+                        </select>
+                        <label for="ing">Ingredients</label>
+                        <textarea class="form-control" id="ing" name ='ingredients' rows="5"></textarea>
+                        <label for="pro">Procedure</label>
+                        <textarea class="form-control" id="pro" name='procedure' rows="10"></textarea>
+                          <button style="text-align: center;" type="submit" class="btn btn-secondary">Bon Apetit</button>
+                      </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
