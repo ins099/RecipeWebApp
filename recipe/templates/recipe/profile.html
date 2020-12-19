@@ -1,0 +1,54 @@
+{% extends 'recipe/layout.html' %}
+{% block body %}
+    <h4>{{userProfile.username}}</h4>
+    <p>{{userProfile.email}}</p>
+    <p>Following:  {{user_following}}</p>
+    <p>Followers:  {{user_follower}}</p>
+
+
+
+
+    {% if user.is_authenticated %}
+    {% if user.username != userProfile.username %}
+    <form action="{% url 'follow' %}" method="POST">
+        {%csrf_token%}
+        <input type="submit" value="{{following_state}}">
+        <input type="hidden" name = 'username' value="{{userProfile.username}}">
+        
+    </form>
+    {% endif %}
+    {% endif %}
+
+    {% for recipe in recipes %}
+        <div style="background-color: lightgray;">
+            
+            <h4>Recipe: {{recipe.title}}</h4>
+            <p>{{recipe.dateposted}}</p>
+            <!-- <p>Likes: {{likes}}</p>
+            <p>Dis Likes: {{dislikes}}</p> -->
+            <h4>Ingredients</h4>
+            <p>{{recipe.ingredients}}</p>
+            <h4>Procedure</h4>
+            <p>{{recipe.procedure}}</p>
+
+            {% if user.is_authenticated %}
+            <div>
+                <form action="{% url 'like' %}" method="POST">
+                    {%csrf_token%}
+                    <button type="submit">Like</button>
+                    <input type="hidden" name = 'like' value="{{recipe.id}}">
+                </form>
+                <form action="{% url 'dislike' %}" method="POST">
+                        {%csrf_token%}  
+                    <button type="submit">Dis Like</button>
+                    <input type="hidden" name = 'dislike' value="{{recipe.id}}">    
+                </form>
+            </div>
+            {% endif %}
+
+
+        </div>
+    {% endfor %}
+
+    
+{% endblock%}

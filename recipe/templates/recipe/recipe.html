@@ -1,0 +1,11 @@
+{% extends 'recipe/layout.html' %}
+
+{% block body %}
+    <div class= 'container' >
+        <h3>{{recipe.title}}</h3>
+        <h5>Ingredients</h5>
+        <p>{{recipe.ingredients}}</p>
+        <h5>Procedure</h5>
+        <p>{{recipe.procedure}}</p>
+    </div>
+{% endblock %}
