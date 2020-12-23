@@ -107,3 +107,9 @@
       margin: 0;
       background-color: linen;
   }
+
+.commentbox{
+    padding: 50px;
+    margin: 0;
+    border: black solid;
+}

@@ -1,0 +1,34 @@
+{% extends 'recipe/layout.html' %}
+
+{% block body %}
+    <h1>Categories</h1>
+
+    {% if recipes %}
+        <h1>{{category}}</h1>
+        <ul>
+            {% for recipe in recipes %}
+                <li>
+                    <div>
+                        <a href="recipe/{{recipe.id}}"><p>{{recipe}}</p></a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+
+    <ul>
+        {% for cate in categories %}
+        <li>
+            <form action="{% url 'category' %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" name = 'category' value = "{{cate.cat}}">
+                <input type="hidden" name = 'selected' value = "{{cate.cat}}">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+{% endblock %}

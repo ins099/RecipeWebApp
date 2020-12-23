@@ -3,9 +3,27 @@
 {% block body %}
     <div class= 'container' >
         <h3>{{recipe.title}}</h3>
+        <p>Recipe By: {{recipe.author}}</p>
+        <p>Date Posted: {{recipe.dateposted}}</p>
         <h5>Ingredients</h5>
         <p>{{recipe.ingredients}}</p>
         <h5>Procedure</h5>
         <p>{{recipe.procedure}}</p>
+    </div>
+    <div>
+        <h3>Comments</h3>
+        {% for comment in comments %}
+        <div class="commentbox">
+            <p>{{comment.author}}</p>
+            <p>{{comment.datecreated}}</p>
+            <p>{{comment.comment}}</p>
+        </div>
+        {% endfor %}
+        <form action="{% url 'comment' %}" method = 'POST'>
+            {% csrf_token %}
+            <textarea name="comment" cols="30" rows="10"></textarea>
+            <input type="hidden" value = {{recipe.id}} name = 'recipeid'>
+            <button type='submit' >Comment</button>
+        </form>
     </div>
 {% endblock %}

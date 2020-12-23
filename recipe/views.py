@@ -4,19 +4,28 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User, Recipe, Category, Following
+from .models import User, Recipe, Category, Following, Comment
 from .forms import NewRecipe
 
 # Create your views here.
 def index(request):
     return render(request , 'recipe/index.html')
 
-def allrecipes(request):
+def allrecipes(request): #API View
     recipes = Recipe.objects.all()
     recipes = recipes.order_by(*['-dateposted'])
-    recipes = recipes.values(*['pk', 'title','category','author','ingredients','procedure', 'dateposted'])
+    recipes = recipes.values(*['pk','likes','title','category','author','ingredients','procedure', 'dateposted'])
+    
     recipes = list(recipes)
     return JsonResponse(recipes, safe=False)
+
+def AllRecipes(request):
+    recipes = Recipe.objects.all()
+    recipes = recipes.values(*['pk','likes','title','category','author','ingredients','procedure', 'dateposted'])
+    
+    return render(request, 'recipe/allrecipes.html', {
+        'recipes':recipes
+    })
 
 @login_required
 def createrecipe(request):
@@ -28,11 +37,13 @@ def createrecipe(request):
                 category_name = dict(form.fields['category'].choices)[int(form.cleaned_data["category"])]
                 ingredients = form.cleaned_data['ingredients']
                 procedure =  form.cleaned_data['procedure']
+                image = form.cleaned_data['img']
                 new_recipe = Recipe(title = title,
                                     author = request.user,
                                     category = Category.objects.get(pk = category_name),
                                     ingredients=ingredients,
                                     procedure = procedure,
+                                    img = image,
                                     )
                 new_recipe.save()
             except IntegrityError:
@@ -41,7 +52,7 @@ def createrecipe(request):
                     'message': 'An Error occured, Try again'
                 })
 
-            return HttpResponse('form Submitted')
+            return HttpResponseRedirect(reverse('recipeid', args=[new_recipe.id]))
         
         return render(request, 'recipe/create.html', {
         'form': NewRecipe()
@@ -50,10 +61,23 @@ def createrecipe(request):
         'form': NewRecipe()
     })
 
+def ListCategory(request):
+    context = {}
+    if request.method == 'POST':
+        category = Category.objects.get(pk = request.POST['selected'])
+        context['category'] = category
+        context['recipes'] = category.recipes.all()
+
+    context['categories'] = Category.objects.all()
+    return render (request, 'recipe/category.html', context)     
+
 def RecipeView(request, id):
     recipe = Recipe.objects.get(pk = id)
+    print(recipe.comments.all())
+
     return render(request, 'recipe/recipe.html', {
-        'recipe': recipe
+        'recipe': recipe,
+        'comments':recipe.comments.all()
     })
 
 def userProfile(request,username):
@@ -113,6 +137,18 @@ def dislike(request):
             recipe.dislikes.add(request.user)
         
         return JsonResponse({'dislikes':recipe.dislikes.all().count()})
+
+def CommentSubmit(request):
+    if request.method == 'POST':
+        recipe = Recipe.objects.get(pk = request.POST['recipeid'])
+        comment = request.POST['comment']
+
+        new_comment = Comment(author = request.user,
+                            recipepost = recipe,
+                            comment = comment)
+        new_comment.save()
+
+        return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
 
 
 def login_view(request):

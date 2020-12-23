@@ -3,8 +3,11 @@
 
 {% block body %}
 <div id='main-allrecipe'>
+    {% for recipe in recipes %}
+        <div>
+            {{recipe}}
+        </div>
 
-
-
+    {% endfor %}
 </div>
 {% endblock %}
