@@ -141,6 +141,7 @@
 #recipebox{
     border: solid;
     text-align: center;
+    position: relative;
 }
 .cen{
     text-align: center;

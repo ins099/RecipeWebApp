@@ -79,9 +79,13 @@ def RecipeView(request, id):
     recipe = Recipe.objects.get(pk = id)
     print(recipe.comments.all())
 
+    likes = []
+    likes.append(recipe.likes.all().count())
+
     return render(request, 'recipe/recipe.html', {
         'recipe': recipe,
-        'comments':recipe.comments.all()
+        'comments':recipe.comments.all(),
+        'likes':likes[0]
     })
 
 def userProfile(request,username):
@@ -99,10 +103,10 @@ def userProfile(request,username):
     context['comments'] = Comment.objects.all()
     
 
-    # likes = []
-    # for recipe in recipes:
-    #     likes.append(recipe.likes.all().count())
-    # context['likes']=likes
+    likes = []
+    for recipe in recipes:
+        likes.append(recipe.likes.all().count())
+    context['likes']=likes[0]
 
     if request.user.is_authenticated:
         following_status = Following.objects.filter(follower=request.user, following= userP)
@@ -150,13 +154,14 @@ def CommentSubmit(request):
         recipe = Recipe.objects.get(pk = request.POST['recipeid'])
         comment = request.POST['comment']
 
+        print(request.POST)
+
         new_comment = Comment(author = request.user,
                             recipepost = recipe,
                             comment = comment)
         new_comment.save()
 
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
-
 
 def listcat():
     categories = Category.objects.all()
