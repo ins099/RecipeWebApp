@@ -9,7 +9,9 @@ from .forms import NewRecipe
 
 # Create your views here.
 def index(request):
-    return render(request , 'recipe/index.html')
+    return render(request , 'recipe/index.html',{
+        'categories':listcat()
+    })
 
 def allrecipes(request): #API View
     recipes = Recipe.objects.all()
@@ -24,7 +26,8 @@ def AllRecipes(request):
     recipes = recipes.values(*['pk','likes','title','category','author','ingredients','procedure', 'dateposted'])
     
     return render(request, 'recipe/allrecipes.html', {
-        'recipes':recipes
+        'recipes':recipes,
+        'categories':listcat()
     })
 
 @login_required
@@ -55,10 +58,12 @@ def createrecipe(request):
             return HttpResponseRedirect(reverse('recipeid', args=[new_recipe.id]))
         
         return render(request, 'recipe/create.html', {
-        'form': NewRecipe()
+        'form': NewRecipe(),
+        'categories':listcat()
     })
     return render(request, 'recipe/create.html', {
-        'form': NewRecipe()
+        'form': NewRecipe(),
+        'categories':listcat()
     })
 
 def ListCategory(request):
@@ -67,7 +72,6 @@ def ListCategory(request):
         category = Category.objects.get(pk = request.POST['selected'])
         context['category'] = category
         context['recipes'] = category.recipes.all()
-
     context['categories'] = Category.objects.all()
     return render (request, 'recipe/category.html', context)     
 
@@ -91,6 +95,9 @@ def userProfile(request,username):
     context['userProfile'] = userP
     context['user_follower'] = followers
     context['user_following'] = following
+    context['categories'] = listcat()
+    context['comments'] = Comment.objects.all()
+    
 
     # likes = []
     # for recipe in recipes:
@@ -151,6 +158,9 @@ def CommentSubmit(request):
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
 
 
+def listcat():
+    categories = Category.objects.all()
+    return categories
 def login_view(request):
     if request.method == "POST":
 
@@ -169,13 +179,9 @@ def login_view(request):
             })
     else:
         return render(request, "recipe/login.html")
-
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
-
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]

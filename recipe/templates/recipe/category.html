@@ -1,34 +1,42 @@
 {% extends 'recipe/layout.html' %}
 
 {% block body %}
-    <h1>Categories</h1>
 
-    {% if recipes %}
-        <h1>{{category}}</h1>
-        <ul>
-            {% for recipe in recipes %}
-                <li>
-                    <div>
-                        <a href="recipe/{{recipe.id}}"><p>{{recipe}}</p></a>
+        
+        <div class="container" style="padding:5%">
+            <h1 style="text-align: center;">{{category}}</h1>
+            <div class="row">
+                <ul>
+                    {% for recipe in recipes %}
+                    <!-- <div class = "col-lg-4 col-md-4 col-sm-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="/images/{{recipe.img}}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                  <h5 class="card-title">{{recipe.title}}</h5>
+                                  <p class="card-text"><span><strong>Author:</strong><a href="/profile/{{recipe.author.username}}">{{recipe.author}}</a>
+                                  </span><br><span><strong>Date Posted:</strong>{{recipe.dateposted.date}}</span> <br> <span><strong>Likes: </strong>{{recipe.likes}}</span></p>
+                                  <a href="recipe/{{recipe.id}}" class="btn btn-primary">View Recipe</a>
+                                </div>
+                            </div> -->
+                            <div class="card mb-3" style="max-width: 540px;">
+                                <div class="row g-0">
+                                  <div id="cat-card" class="col-md-6">
+                                    <img src="/images/{{recipe.img}}" style="display: inline-block;" alt="...">
+                                  </div>
+                                  <div id="cat-card" class="col-md-6">
+                                    <div class="card-body">
+                                      <h5 class="card-title">{{recipe.title}}</h5>
+                                      <p class="card-text"><span><strong>Author:</strong><a href="/profile/{{recipe.author.username}}">{{recipe.author}}</a>
+                                      </span><br><span><strong>Date Posted:</strong>{{recipe.dateposted.date}}</span> <br> <span id="CatItemLikes"></span></p>
+                                      <a href="recipe/{{recipe.id}}" class="btn btn-primary">View Recipe</a>                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-
-    {% else %}
-
-
-    <ul>
-        {% for cate in categories %}
-        <li>
-            <form action="{% url 'category' %}" method="POST">
-                {% csrf_token %}
-                <input type="submit" name = 'category' value = "{{cate.cat}}">
-                <input type="hidden" name = 'selected' value = "{{cate.cat}}">
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
 
 {% endblock %}

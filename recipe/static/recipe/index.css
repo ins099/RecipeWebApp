@@ -1,9 +1,11 @@
-  /* Index.html Styling */
+ /* Index.html Styling */
 .btn{
     color: white;
     background-color: black;
 }
-
+.container{
+    height: 1000px;
+}
 .IAS-Recipe{
     color: black;
     font-family: 'Monoton', cursive;
@@ -52,8 +54,7 @@
     color: yellowgreen;
 }
 #footer{
-    position:relative;
-    bottom:0%;
+    position:absolute;
     width: 100%;
     height: 200px;
     background-color: black;
@@ -79,24 +80,11 @@
 
   /* Create.html Styling */
 
-.create-form-div{
-    padding: 10%;
-    text-align: center;
-    background-image:url('https://t3.ftcdn.net/jpg/02/07/68/68/360_F_207686801_aJaxzCju0aJ7us5hYFB59KvXU6NcqjMG.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-}
-
 #form-div{
     border-radius: 25px;
-    padding: 10px;
-    background-color: lightgray;
-    position: relative;
-    left: 25%;
-    text-align: center;
+    padding: 100px 20%;
     margin:0;
-    width: 50%;
+    width: 20%;
 }
 
 
@@ -112,4 +100,52 @@
     padding: 50px;
     margin: 0;
     border: black solid;
+}
+
+  /* login.html -- register Styling */
+
+.loginbox{
+    text-align: center;
+    position: relative;
+    top:50%;
+    margin: 3%;
+    padding: 8%;
+}
+.img-log{
+    width: 350px;
+    height: 300px;
+}
+
+/* Category Page Styling */
+
+#category{
+    margin: 10%;
+}
+.btn{
+    display: block;
+    width: 100px;
+    background-color: white;
+    color: black;
+
+}
+#id_img{
+    display: block;
+    padding: 5px;
+}
+
+#cat-card{
+    margin: 0;
+    padding: 0%;
+}
+
+#recipebox{
+    border: solid;
+    text-align: center;
+}
+.cen{
+    text-align: center;
+}
+.but{
+    display: block;
+    width: 100%;
 }

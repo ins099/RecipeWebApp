@@ -2,23 +2,33 @@
 
 {% block body %}
 
-    <h2>Login</h2>
-
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Login">
-    </form>
-
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-
+    <div class="container loginbox">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div style="text-align: center;">
+                    <h2>Login</h2>
+                    <form action="{% url 'login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="password" name="password" placeholder="Password">
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="Login">
+                    </form>
+                    
+                    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+                
+                </div>    
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+               <img class="img-log" src="https://media.giphy.com/media/w0CJXS2M44xfW/giphy.gif" alt="">
+            </div>
+        </div>    
+    </div>
 {% endblock %}

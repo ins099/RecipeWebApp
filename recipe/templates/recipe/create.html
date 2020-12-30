@@ -8,16 +8,19 @@
     {% endif %}
 
     <div class= 'create-form-div'>
-        <h3>Add New Recipe</h3>
-        <div id="form-div">
-            <form action="{% url 'create' %}" method="POST">
-                    {% csrf_token %}
-                    <div class="form-group">
-                            {{form.as_p}}
-                            <input type="submit" value = 'Bon Apetit'>
-                      </div>
-
-            </form>
+        <div class="container">
+            <div class="row">
+                <div class="col" id="form-div">
+                    <h3>Add New Recipe</h3>
+                    <form action="{% url 'create' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-control">
+                                {{form}}
+                                <input class = 'btn btn-secondary' style="display: block;" type="submit" value = 'Bon Apetit'>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

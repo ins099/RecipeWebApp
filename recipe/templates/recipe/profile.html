@@ -1,53 +1,84 @@
 {% extends 'recipe/layout.html' %}
 {% block body %}
-    <h4>{{userProfile.username}}</h4>
-    <p>{{userProfile.email}}</p>
-    <p>Following:  {{user_following}}</p>
-    <p>Followers:  {{user_follower}}</p>
-
-
-
-
-    {% if user.is_authenticated %}
-    {% if user.username != userProfile.username %}
-    <form action="{% url 'follow' %}" method="POST">
-        {%csrf_token%}
-        <input type="submit" value="{{following_state}}">
-        <input type="hidden" name = 'username' value="{{userProfile.username}}">
-        
-    </form>
-    {% endif %}
-    {% endif %}
 
     {% for recipe in recipes %}
-        <div style="background-color: lightgray;">
-            
-            <h4>Recipe: {{recipe.title}}</h4>
-            <p>{{recipe.dateposted}}</p>
-            <!-- <p>Likes: {{likes}}</p>
-            <p>Dis Likes: {{dislikes}}</p> -->
-            <h4>Ingredients</h4>
-            <p>{{recipe.ingredients}}</p>
-            <h4>Procedure</h4>
-            <p>{{recipe.procedure}}</p>
-
-            {% if user.is_authenticated %}
-            <div>
-                <form action="{% url 'like' %}" method="POST">
-                    {%csrf_token%}
-                    <button type="submit">Like</button>
-                    <input type="hidden" name = 'like' value="{{recipe.id}}">
-                </form>
-                <form action="{% url 'dislike' %}" method="POST">
-                        {%csrf_token%}  
-                    <button type="submit">Dis Like</button>
-                    <input type="hidden" name = 'dislike' value="{{recipe.id}}">    
-                </form>
+    <h4>{{userProfile.username}}</h4>
+        <p>{{userProfile.email}}</p>
+        <p>Following:  {{user_following}}</p>
+        <p>Followers:  {{user_follower}}</p>          
+        {% if user.is_authenticated %}
+        {% if user.username != userProfile.username %}
+            <form action="{% url 'follow' %}" method="POST">
+                {%csrf_token%}
+                <input type="submit" value="{{following_state}}">
+                <input type="hidden" name = 'username' value="{{userProfile.username}}">
+            </form>
+        {% endif %}
+        {% endif %}
+    
+   <div class="contain">
+       <div class="container">
+           <div class="row">
+                <div class="col">
+                    
+        <div id="recipebox">
+            <h2 class="cen">{{recipe.title}}</h2>
+            <p style="text-align: left; padding: 0 15px;">Date Posted:  {{recipe.dateposted.date}}</p>
+            <img class="cen" src="/images/{{recipe.img}}" alt="{{recipe.title}}-img">
+            <div style="text-align: left;  padding: 0 15px;">
+                <h5>Ingredients</h5>
+                <p>{{recipe.ingredients}}</p>
+                <h5>Procedure</h5>
+                <p>{{recipe.procedure}}</p>    
+                <p><b>Likes:</b>{{recipe.likes}}</p>
             </div>
+            {% if user.is_authenticated %}
+                <div class="container" style="height: 50px;">
+                    <div class="row">
+                        <div class="col" style="padding: 0 0 0;">
+                            <form action="{% url 'like' %}" method="POST">
+                                {%csrf_token%}
+                                <button class= "btn btn-secondary but" type="submit">Like</button>
+                                <input type="hidden" name = 'like' value="{{recipe.id}}">
+                            </form>
+                        </div>
+                        <div class="col" style="padding: 0 0 0;">
+                            <form action="{% url 'dislike' %}" method="POST">
+                                {%csrf_token%}  
+                                <button class= "btn btn-secondary but"  type="submit">Dis Like</button>
+                                <input type="hidden" name = 'dislike' value="{{recipe.id}}">    
+                            </form>
+                        </div> 
+                    </div>
+                </div>
             {% endif %}
-
-
+            <div class="container" style="height: min-content;">
+                <div class = "row">
+                    <div class="col">
+                        <div style="text-align: left;">
+                            <p><b>Comments</b></p>
+                            <div id="commentinputbox">
+                                <form action="{% url 'comment' %}" method="POST">
+                                    {%csrf_token%}
+                                    <div class="form-floating">
+                                        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                                        <label for="floatingTextarea">Add Comment</label>
+                                      </div>
+                                </form>
+                            </div>
+                            {% for comment in comments %}
+                                {{comment}}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+                </div>
+           </div>
+       </div>
+    </div>
+
     {% endfor %}
 
     

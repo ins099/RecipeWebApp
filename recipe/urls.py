@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('', views.index, name = 'index'),
-    path('allrecipes', views.allrecipes, name = 'allrecipes'),
+    path('api/allrecipes', views.allrecipes, name = 'allrecipes'),
     path('create', views.createrecipe, name='create'),    
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
@@ -14,6 +14,5 @@ urlpatterns = [
     path('dislike', views.dislike, name='dislike'),
     path('comment', views.CommentSubmit, name = 'comment'),
     path('category', views.ListCategory, name = 'category'),
-    path('AllRecipe', views.AllRecipes, name = 'AllRecipe')
-
+    path('AllRecipe', views.AllRecipes, name = 'AllRecipe'),
 ]
