@@ -21,95 +21,96 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="./index.html">Company Name</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    
-      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li class="nav-item ">
-            <a class="nav-link" href="{% url 'index' %}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'AllRecipe' %}">All Recipes</a>
-          </li>
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="/profile/{{request.user}}">{{request.user}}</a>
-          </li>
-          
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Categories
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              {% for cate in categories %}
-                    <table>
-                        <th>
-                            <li class="dropdown-item">
-                                <form action="{% url 'category' %}" method="POST">
-                                    {% csrf_token %}
-                                    <button class="btn" type="submit" name = 'category' value = "{{cate.cat}}">{{cate.cat}}</button>
-                                    <input type="hidden" name = 'selected' value = "{{cate.cat}}">
-                                </form>
-                            </li>
-                        </th>
-                    </table>
-                   
-                    {% endfor %}
-            </div>
-          </li>
-          {%endif%}
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'create' %}">Add New Recipe</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-          </li>
-          {%endif%}
-  
-          {% if not user.is_authenticated %}
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
-          </li>
-          {%endif%}
+    <div class="container-fluid" style="padding: 0 15%">
+      <nav class="navbar navbar-light nav-bg-dark navbar-expand-lg justify-content-md-center justify-content-start">
+        <a class="navbar-brand d-inline" href="/">Food Network</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar2" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-
-      </div>
+        <div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsingNavbar2">
+            <ul class="navbar-nav mx-auto text-md-center text-left">
+                <li class="nav-item my-auto">
+                  <form class="form-inline my-2 my-lg-0" method="POST" action="{% url 'search' %}">
+                    <input class="form-control mr-sm-2" type="search" name = 'search' placeholder="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                  </form>
+                </li>
+                
+            </ul>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item ">
+                  <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'AllRecipe' %}">All Recipes</a>
+                </li>        
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Categories
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for cate in categories %}
+                          <table   style="text-align: center;">
+                              <th>
+                                  <li class="dropdown-item">
+                                      <form action="{% url 'category' %}" method="POST">
+                                          {% csrf_token %}
+                                          <button class="btn btni" type="submit" name = 'category' value = "{{cate.cat}}">{{cate.cat}}</button>
+                                          <input type="hidden" name = 'selected' value = "{{cate.cat}}">
+                                      </form>
+                                  </li>
+                              </th>
+                          </table>
+                         
+                          {% endfor %}
+                  </div>
+                </li>
+        
+                  <li class="nav-item dropdown active">
+                    {% if not user.is_authenticated %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Join?</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                      <a class="dropdown-item" href="{% url 'register' %}">Register</a>
+                    </div>
+                    
+                    
+                    {%endif%}
+                    {% if user.is_authenticated %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{request.user}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/profile/{{request.user}}">My Profile</a>
+                      <a class="dropdown-item" href="{% url 'create' %}">Add Recipe</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/logout">Logout</a>
+                    </div>
+                  </li>
+                    {%endif%}
+            </ul>
+        </div>
     </nav>
+    </div>
 
 {% block body %}
+
 
 {% endblock %}
 
 
-
-
-
-
-        <!-- Contact us -->
-        <div id='footer'>
-            <h4 style="color: white;">Connect With Us</h4>
-
-            <a href="#" class="fa fa-facebook"></a>
-            <a href="#" class="fa fa-twitter"></a>
-            <a href="#" class="fa fa-reddit"></a>
-            <a href="#" class="fa fa-instagram"></a>
-            <h6>Copyright 2020 by IAS. All Rights Reserved</h6>
-
-            <!-- 286*190 size of card img -->
-       </div>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
   </body>
+  <footer>
+    <h4 style="color: white;">Connect With Us</h4>
+  
+    <a href="#" class="fa fa-facebook"></a>
+    <a href="#" class="fa fa-twitter"></a>
+    <a href="#" class="fa fa-reddit"></a>
+    <a href="#" class="fa fa-instagram"></a>
+    <h6>Copyright 2020 by IAS. All Rights Reserved</h6>
+  </footer>
+  
 </html>

@@ -6,22 +6,13 @@
         <div class="container" style="padding:5%">
             <h1 style="text-align: center;">{{category}}</h1>
             <div class="row">
-                <ul>
-                    {% for recipe in recipes %}
-                    <!-- <div class = "col-lg-4 col-md-4 col-sm-4">
-                            <div class="card" style="width: 18rem;">
-                                <img src="/images/{{recipe.img}}" class="card-img-top" alt="...">
-                                <div class="card-body">
-                                  <h5 class="card-title">{{recipe.title}}</h5>
-                                  <p class="card-text"><span><strong>Author:</strong><a href="/profile/{{recipe.author.username}}">{{recipe.author}}</a>
-                                  </span><br><span><strong>Date Posted:</strong>{{recipe.dateposted.date}}</span> <br> <span><strong>Likes: </strong>{{recipe.likes}}</span></p>
-                                  <a href="recipe/{{recipe.id}}" class="btn btn-primary">View Recipe</a>
-                                </div>
-                            </div> -->
+              <div class="col-lg-6 col-md-12 col-sm-6">
+                {% for recipe in recipes %}
                             <div class="card mb-3" style="max-width: 540px;">
                                 <div class="row g-0">
                                   <div id="cat-card" class="col-md-6">
-                                    <img src="/images/{{recipe.img}}" style="display: inline-block;" alt="...">
+                                    <img src="/images/{{recipe.img}}" style="display: inline-block;" width='258.99px'
+                                    height= '194px'>
                                   </div>
                                   <div id="cat-card" class="col-md-6">
                                     <div class="card-body">
@@ -34,9 +25,6 @@
                               </div>
                     </div>
                     {% endfor %}
-                </ul>
+              </div>
             </div>
-        </div>
-        
-
 {% endblock %}

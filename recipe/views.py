@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError, models
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.http.response import HttpResponseNotFound
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Recipe, Category, Following, Comment
-from .forms import NewRecipe
+from .forms import NewRecipe, ProfPic
 
 # Create your views here.
 def index(request):
@@ -23,43 +24,50 @@ def allrecipes(request): #API View
 
 def AllRecipes(request):
     recipes = Recipe.objects.all()
-    recipes = recipes.values(*['pk','likes','title','category','author','ingredients','procedure', 'dateposted'])
-    
+        
     return render(request, 'recipe/allrecipes.html', {
         'recipes':recipes,
-        'categories':listcat()
+        'categories':listcat(),
     })
+
+def search(request):
+    pass
 
 @login_required
 def createrecipe(request):
     if request.method == 'POST':
-        form = NewRecipe(request.POST)
+        print(request.POST)
+        form = NewRecipe(data=request.POST, files = request.FILES)
         if form.is_valid():
             try:
                 title = form.cleaned_data['title']            
                 category_name = dict(form.fields['category'].choices)[int(form.cleaned_data["category"])]
+                description = form.cleaned_data['description']
                 ingredients = form.cleaned_data['ingredients']
                 procedure =  form.cleaned_data['procedure']
                 image = form.cleaned_data['img']
                 new_recipe = Recipe(title = title,
                                     author = request.user,
+                                    description = description,
                                     category = Category.objects.get(pk = category_name),
                                     ingredients=ingredients,
                                     procedure = procedure,
                                     img = image,
                                     )
-                new_recipe.save()
+                if (not Recipe.objects.filter(pk = new_recipe.id).exists() or new_recipe.edit == False):
+                    new_recipe.save()
+                    return HttpResponseRedirect(reverse('recipeid', kwargs={'id':new_recipe.id}))
+
             except IntegrityError:
                 return render(request, 'recipe/create.html',{
                     'form': NewRecipe(request.POST),
                     'message': 'An Error occured, Try again'
                 })
 
-            return HttpResponseRedirect(reverse('recipeid', args=[new_recipe.id]))
-        
         return render(request, 'recipe/create.html', {
         'form': NewRecipe(),
-        'categories':listcat()
+        'categories':listcat(),
+        'message':"Form Validation error!!!"
     })
     return render(request, 'recipe/create.html', {
         'form': NewRecipe(),
@@ -85,37 +93,81 @@ def RecipeView(request, id):
     return render(request, 'recipe/recipe.html', {
         'recipe': recipe,
         'comments':recipe.comments.all(),
-        'likes':likes[0]
+        'likes':likes[0],
+        'categories':listcat()
     })
 
 def userProfile(request,username):
+
     context = {}
-    userP = User.objects.all().filter(username=username).first()
-    recipes = Recipe.objects.filter(author = userP).all()
-    followers = Following.objects.filter(following=userP).all().count()
-    following = Following.objects.filter(follower = userP).all().count()
+    if User.objects.filter(username = username).exists():
+        context['categories']=listcat()
 
-    context['recipes'] = recipes
-    context['userProfile'] = userP
-    context['user_follower'] = followers
-    context['user_following'] = following
-    context['categories'] = listcat()
-    context['comments'] = Comment.objects.all()
-    
-
-    likes = []
-    for recipe in recipes:
-        likes.append(recipe.likes.all().count())
-    context['likes']=likes[0]
-
-    if request.user.is_authenticated:
-        following_status = Following.objects.filter(follower=request.user, following= userP)
-        if len(following_status) == 0:
-            context['following_state']= 'Follow'
+        userP = User.objects.all().filter(username=username).first()
+        recipes = Recipe.objects.filter(author = userP).all()
+        followers = Following.objects.filter(following=userP).all().count()
+        following = Following.objects.filter(follower = userP).all().count()
+        existPhoto = get_object_or_404(User, username = username)
+        existPhoto = str(existPhoto.profile_pic)
+        print(len(existPhoto))
+        if len(existPhoto) > 0:
+            context['exists'] = True
         else:
-            context['following_state']= 'UnFollow'
+            context['exists'] = False 
 
-    return render (request, 'recipe/profile.html',context)
+        if request.method == 'POST':
+            form = ProfPic(data=request.POST, files = request.FILES)
+            if form.is_valid():
+                profilePicture = form.cleaned_data['profilephoto']
+                user = get_object_or_404(User, username = username)
+                user.profile_pic = profilePicture
+                user.save(update_fields=['profile_pic'])
+                print(profilePicture)
+            else:
+                context["form"] = ProfPic()
+                context["message"] = "Form Validation Error"
+        
+        context['form'] = ProfPic()
+
+        if len(recipes) != 0: 
+            context['recipes'] = recipes
+            context['userProfile'] = userP
+            context['user_follower'] = followers
+            context['user_following'] = following
+            context['categories'] = listcat()
+            context['comments'] = Comment.objects.all()
+            
+            likes = []
+            for recipe in recipes:
+                likes.append(recipe.likes.all().count())
+            
+            context['likes']=likes[0]
+
+            if request.user.is_authenticated:
+                following_status = Following.objects.filter(follower=request.user, following= userP)
+                if len(following_status) == 0:
+                    context['following_state']= 'Follow'
+                else:
+                    context['following_state']= 'UnFollow'
+
+            return render (request, 'recipe/profile.html',context)
+        else:
+            context['recipes'] = recipes
+            context['userProfile'] = userP
+            context['user_follower'] = followers
+            context['user_following'] = following
+            context['norecipes'] = f"{username.upper()} has No recipes yet!!"
+            
+            if request.user.is_authenticated:
+                following_status = Following.objects.filter(follower=request.user, following= userP)
+                if len(following_status) == 0:
+                    context['following_state']= 'Follow'
+                else:
+                    context['following_state']= 'UnFollow'
+
+            return render (request, 'recipe/profile.html',context)
+    else:
+        return HttpResponseNotFound()
 
 def Follow(request):
     if request.method == 'POST':
@@ -136,18 +188,12 @@ def like(request):
 
         if request.user not in all_users:
             recipe.likes.add(request.user)
+        else:
+            recipe.likes.remove(request.user)
         
-        return JsonResponse({'likes':recipe.likes.all().count()})
+        likes = recipe.likes.all().count()
 
-def dislike(request):
-    if request.method == 'POST':
-        recipe = Recipe.objects.get(pk = request.POST['dislike'])
-        all_users = recipe.dislikes.all()
-
-        if request.user not in all_users:
-            recipe.dislikes.add(request.user)
-        
-        return JsonResponse({'dislikes':recipe.dislikes.all().count()})
+        return HttpResponseRedirect(reverse('recipeid', args=[request.POST['like']]))
 
 def CommentSubmit(request):
     if request.method == 'POST':
@@ -162,6 +208,22 @@ def CommentSubmit(request):
         new_comment.save()
 
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
+
+def Edit(request, recipeid):
+    if request.method == "GET":
+        recipe = get_object_or_404(Recipe, pk = recipeid)
+        form = NewRecipe()
+        form.fields['title'].initial = recipe.title
+        form.fields['description'].initial = recipe.description
+        form.fields['ingredients'].initial = recipe.ingredients
+        form.fields['procedure'].initial = recipe.procedure
+        form.fields['category'].initial = recipe.category
+        form.fields['img'].initial = recipe.img
+
+        return render(request, 'recipe/create.html',{
+            'form':form
+        })
+
 
 def listcat():
     categories = Category.objects.all()
@@ -189,26 +251,27 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 def register(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
+        mail = request.POST["email"]
+        first = request.POST['first_name']
+        last = request.POST['last_name']
 
         # Ensure password matches confirmation
-        password = request.POST["password"]
+        passs = request.POST["password"]
         confirmation = request.POST["confirmation"]
-        if password != confirmation:
+        if passs != confirmation:
             return render(request, "recipe/register.html", {
                 "message": "Passwords must match."
             })
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(request.POST["username"], email=mail, password=passs, first_name=first, last_name=last)
             user.save()
         except IntegrityError:
             return render(request, "recipe/register.html", {
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("profile", args = [user.username]))
     else:
         return render(request, "recipe/register.html")

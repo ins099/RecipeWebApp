@@ -2,12 +2,34 @@
 
 
 {% block body %}
-<div id='main-allrecipe'>
-    {% for recipe in recipes %}
-        <div>
-            {{recipe}}
-        </div>
+<div class="container-fluid" style="padding:5%">
+    <h1 style="text-align: center;">All Recipes</h1>
+    <div class="row">
+            {% for recipe in recipes %}
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                          <div id="cat-card" class="col-md-6">
+                            <img src="/images/{{recipe.img}}" style="display: inline-block; padding-left: 15px;" width='258.99px'
+                            height= '250px'>
+                          </div>
+                          <div id="cat-card" class="col-md-6">
+                            <div class="card-body">
+                              <h5 class="card-title cen">{{recipe.title}}</h5>
+                              <hr>
 
-    {% endfor %}
+                              <strong>Description:  </strong>{{recipe.description}}
+
+                            <p><span><strong>Likes:   </strong>{{recipe.likes.count}}</span> </p>
+                              <a href="recipe/{{recipe.id}}" class="btn btn-primary">View Recipe</a>                                    
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            {% endfor %}
+    </div>
 </div>
+
+
 {% endblock %}

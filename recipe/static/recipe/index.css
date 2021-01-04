@@ -1,45 +1,55 @@
- /* Index.html Styling */
+/* Index.html Styling */
 .btn{
     color: white;
     background-color: black;
 }
-.container{
-    height: 1000px;
+/* default state */
+.navbar {
+    position: relative;
+    /* default colors + transition */
+    background-color: white;
+    color: black;
+    transition: all 0.3s ease-out;
+  }
+  
+  /* scrolling state */
+.navbar.fixed-top {
+    padding:0.5% 15% 0.5% 18%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    /* scrolling colors */
+    background-color: lightgrey;
+    color: white;
+  }
+.navbar.fixed-top a {
+    color: black;
+  }
+
+.name, .join{
+    padding: 15% 10%;
 }
+
 .IAS-Recipe{
     color: black;
     font-family: 'Monoton', cursive;
-    font-size: 100px;
-    position: absolute;
-    left: 10%;
-    top: 40%;
+    font-size: 3rem;
+    line-height: 1.5;
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
+    border: ivory;
 }
 .tagline{
-    padding-top: 20px;
-    font-size: 25px;
-    position: absolute;
-    left: 15%;
-    top: 50%;
+    font-size: 1rem;
+    color:white;
+    padding-left: 5%;text-shadow: -1px 1px 0 #000,
+    1px 1px 0 #000,
+   1px -1px 0 #000,
+  -1px -1px 0 #000;
 }
-#intro-div>img{
-    height: 930px;
-    width: 1920px;
-    margin: 0;
-    padding: 0;
-}
-#join{
-    text-align:center;
-    display: inline-block;
-    position: absolute;
-    bottom: 30%;
-    left:60%;
-    margin: 0;
-    width: 380px;
-}
-.container-fluid{
-    height: 700px;
+
+#recent-recipe, #mostliked-recipe{
+    height: 600px;
     margin: 0;
     padding: 50px;
     text-align:center;
@@ -48,20 +58,21 @@
     text-align: center;
     padding: 20px;
 }
-#recent-recipe>h3{
+#recent-recipe>h4, #mostliked-recipe>h4{
     margin: 0 0 50px 0;
-    font-size: 50px ;
+    font-size: 30px ;
     color: yellowgreen;
 }
-#footer{
-    position:absolute;
+footer{
+    position: absolute;
     width: 100%;
     height: 200px;
     background-color: black;
     text-align: center;
     padding: 45px;
+    overflow: hidden;
 }
-#footer>h6{
+footer>h6{
     color:grey;
 }
 .fa {
@@ -121,7 +132,7 @@
 #category{
     margin: 10%;
 }
-.btn{
+.btni{
     display: block;
     width: 100px;
     background-color: white;
@@ -141,7 +152,6 @@
 #recipebox{
     border: solid;
     text-align: center;
-    position: relative;
 }
 .cen{
     text-align: center;
@@ -149,4 +159,11 @@
 .but{
     display: block;
     width: 100%;
+}
+
+.profile{
+    height: 200px;
+    width: 200px;
+    border-radius: 100%;
+    margin-bottom: 5%;
 }

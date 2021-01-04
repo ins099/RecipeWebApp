@@ -2,52 +2,30 @@
 {% load static %}
 
 {% block body %}
-            <!-- Intro Div -->
-            <div id='intro-div' class= 'introDiv'>
-                <img src="{% static 'recipe/bgfood.png' %}" alt="Back Ground Food Img">
-                <h3 class = 'IAS-Recipe'>IAS Recipe</h3>
-                <p class = 'tagline'>Where you find the delicious recipes all around the world!</p>
-                <div id = 'join'>
-                    <h3>Join Our Community!</h3>
-                    <button class="btn btn-secondary"> Sign Up </button>
-                </div>
-            </div>
+<section id="title" style= "background-image: url({% static 'recipe/bgfood.png' %}); background-size:cover;">
+ 
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+          <div class="name">
+            <h3 class = 'IAS-Recipe'>Food Network</h3>
+            <p class = 'tagline'>Where you find the delicious recipes from all around the world!</p>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+</section>
+
+</div>
+
     
             <!-- Recent Recipe Div -->
-            <div id = 'recent-recipe' class = 'container-fluid'>
-                <h3>Recent Recipes</h3>
+            <div id = 'recent-recipe' >
+                <h4>Recent Recipes</h4>
                 <div class = "card-container">
                     <div class="row">
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
                         <div class="col">
                             <div class="card" style="width: 18rem;">
                                 <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
@@ -64,40 +42,10 @@
             </div>
     
             <!-- Most Liked Recipe -->
-            <div id = 'recent-recipe' class = 'container-fluid'>
-                <h3>Most Liked Recipes</h3>
+            <div id = 'mostliked-recipe' class = 'container-fluid'>
+                <h4>Most Liked Recipes</h4>
                 <div class = "card-container">
                     <div class="row">
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="card" style="width: 18rem;">
-                                <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
-                                <div class="card-body">
-                                  <h5 class="card-title">Card title</h5>
-                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                              </div>
-                        </div>
                         <div class="col">
                             <div class="card" style="width: 18rem;">
                                 <img src="https://images.all-free-download.com/images/graphicthumb/food_picture_01_hd_pictures_167558.jpg" class="card-img-top" alt="card-item">
@@ -112,4 +60,5 @@
                 </div>
                 <a href="#" style="position: absolute; right:130px">See More</a>
             </div>
-{% endblock %}
+
+            {% endblock %}
