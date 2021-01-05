@@ -5,8 +5,14 @@ from django.http.response import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import generics, status
+
 from .models import User, Recipe, Category, Following, Comment
 from .forms import NewRecipe, ProfPic
+from .serializers import RecipeSerializer
 
 # Create your views here.
 def index(request):
@@ -14,13 +20,9 @@ def index(request):
         'categories':listcat()
     })
 
-def allrecipes(request): #API View
-    recipes = Recipe.objects.all()
-    recipes = recipes.order_by(*['-dateposted'])
-    recipes = recipes.values(*['pk','likes','title','category','author','ingredients','procedure', 'dateposted'])
-    
-    recipes = list(recipes)
-    return JsonResponse(recipes, safe=False)
+class RecentRecipeView(generics.ListAPIView):
+    queryset = Recipe.objects.all().order_by('-dateposted')
+    serializer_class = RecipeSerializer
 
 def AllRecipes(request):
     recipes = Recipe.objects.all()
@@ -36,7 +38,6 @@ def search(request):
 @login_required
 def createrecipe(request):
     if request.method == 'POST':
-        print(request.POST)
         form = NewRecipe(data=request.POST, files = request.FILES)
         if form.is_valid():
             try:
@@ -54,9 +55,16 @@ def createrecipe(request):
                                     procedure = procedure,
                                     img = image,
                                     )
-                if (not Recipe.objects.filter(pk = new_recipe.id).exists() or new_recipe.edit == False):
+                #for edit save
+                if form.cleaned_data['edit']== True:
                     new_recipe.save()
                     return HttpResponseRedirect(reverse('recipeid', kwargs={'id':new_recipe.id}))
+
+                # for new recipe save
+                else:
+                    new_recipe.save()
+                    return HttpResponseRedirect(reverse('recipeid', kwargs={'id':new_recipe.id}))
+                
 
             except IntegrityError:
                 return render(request, 'recipe/create.html',{
@@ -210,7 +218,7 @@ def CommentSubmit(request):
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
 
 def Edit(request, recipeid):
-    if request.method == "GET":
+    if request.method=='GET':
         recipe = get_object_or_404(Recipe, pk = recipeid)
         form = NewRecipe()
         form.fields['title'].initial = recipe.title
@@ -219,6 +227,7 @@ def Edit(request, recipeid):
         form.fields['procedure'].initial = recipe.procedure
         form.fields['category'].initial = recipe.category
         form.fields['img'].initial = recipe.img
+        form.fields['edit'].initial = True
 
         return render(request, 'recipe/create.html',{
             'form':form

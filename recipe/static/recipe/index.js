@@ -20,3 +20,15 @@ function limitText(limitField,limitCount, limitNum) {
 	}
 }
 
+function showAllRecipes() {
+	fetch('/recentrecipes')
+	.then(response => response.json())
+	.then(recipes => {
+		for (var i=0; i < recipes.length; i++){
+			console.log(recipes[i].title);
+			document.querySelector('#main').innerHTML = recipes[i].title;
+		}
+	})
+}
+
+showAllRecipes();
