@@ -23,7 +23,6 @@ class Recipe(models.Model):
     ingredients = models.TextField(max_length=100000)
     procedure = models.TextField(max_length=100000)
     likes = models.ManyToManyField(User, blank=True, related_name="recipe_likes")
-    dislikes = models.ManyToManyField(User, blank=True, related_name="recipe_dislikes")
     dateposted = models.DateTimeField(auto_now_add= True)
     img = models.ImageField(blank=True, null =True, upload_to = 'recipeimages')
     def __str__(self):

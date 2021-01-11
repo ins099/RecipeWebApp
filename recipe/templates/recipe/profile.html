@@ -48,9 +48,12 @@
                             <div class="col">
                                 {% if norecipes %}
                                     <h3><i>{{norecipes}}</i></h3>
+                                    {% if add %}
+                                    <a href="/create">Add New</a>
+                                    {% endif %}
                                 {%else%}
 
-                                {% for recipe in recipes %}
+                                     {% for recipe in recipes %}
                                     <div id="recipebox">
                                         <h2 class="cen"><a href="/recipe/{{recipe.id}}">{{recipe.title}}</a></h2>
                                         <hr>
@@ -67,7 +70,7 @@
                                     </div>
                                     <br>
                                     {% endfor %}
-                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>

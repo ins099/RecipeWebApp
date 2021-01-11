@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
+from rest_framework.decorators import permission_classes
+from rest_framework import permissions
 
 from .models import User, Recipe, Category, Following, Comment
 from .forms import NewRecipe, ProfPic
@@ -21,8 +23,25 @@ def index(request):
     })
 
 class RecentRecipeView(generics.ListAPIView):
-    queryset = Recipe.objects.all().order_by('-dateposted')
+
+    queryset = Recipe.objects.all().order_by('-dateposted')[:5]
     serializer_class = RecipeSerializer
+
+@permission_classes((permissions.AllowAny,))
+class MostLikeRecipeView(APIView):
+    serializer_class = RecipeSerializer
+
+    def get(self,request,format=None):
+        all = Recipe.objects.all()
+        all = all.values(*['id','author','title','description', 'ingredients','procedure','likes','img'])
+
+        for recipe in all:
+            r = Recipe.objects.get(title = recipe['title'])
+            r = r.likes.all().count()
+            recipe['likes'] = r
+
+        all = all.order_by('-likes')[:5]
+        return Response(all,status = status.HTTP_200_OK)
 
 def AllRecipes(request):
     recipes = Recipe.objects.all()
@@ -33,7 +52,25 @@ def AllRecipes(request):
     })
 
 def search(request):
-    pass
+    if request.method == 'POST':
+        s_item = request.POST.get('search')
+        allrecipes = Recipe.objects.all()
+        print(allrecipes)
+
+        if Recipe.objects.filter(title = s_item).exists():
+            recipe = Recipe.objects.get(title = s_item)
+            return HttpResponseRedirect(reverse('recipeid', args = [recipe.id]))
+        else:
+            subscripts = []
+            for recipe in allrecipes:
+                if s_item.upper() in recipe.title.upper():
+                    subscripts.append(recipe)
+            
+        return render (request, 'recipe/search.html',{
+                'subscripts':subscripts,
+                "value": s_item,
+
+            })
 
 @login_required
 def createrecipe(request):
@@ -131,6 +168,7 @@ def userProfile(request,username):
                 user.profile_pic = profilePicture
                 user.save(update_fields=['profile_pic'])
                 print(profilePicture)
+                return HttpResponseRedirect(reverse('profile', args = [userP]))
             else:
                 context["form"] = ProfPic()
                 context["message"] = "Form Validation Error"
@@ -164,8 +202,13 @@ def userProfile(request,username):
             context['userProfile'] = userP
             context['user_follower'] = followers
             context['user_following'] = following
-            context['norecipes'] = f"{username.upper()} has No recipes yet!!"
             
+            if request.user != userP:
+                context['norecipes'] = f"{username.upper()} has No recipes yet!!"
+            else:
+                context['norecipes'] = f" You donot have any recipes yet!!"
+                context['add'] = True
+
             if request.user.is_authenticated:
                 following_status = Following.objects.filter(follower=request.user, following= userP)
                 if len(following_status) == 0:

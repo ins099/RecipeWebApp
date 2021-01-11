@@ -1,0 +1,14 @@
+{% extends 'recipe/layout.html' %}
+{% load static %}
+
+{% block body %}
+
+    <ul>
+        {% for item in subscripts %}
+
+            {{subscripts.title}}
+
+        {% endfor %}
+    </ul>
+
+{% endblock %}
