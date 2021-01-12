@@ -3,12 +3,47 @@
 
 {% block body %}
 
-    <ul>
-        {% for item in subscripts %}
 
-            {{subscripts.title}}
 
-        {% endfor %}
-    </ul>
+    <div class="container-fluid" style="padding:5%">
+
+        {% if subscripts %}
+        <h5 style="text-align: center;">Showing Result for "{{value}}"</h5>
+
+        <div class="row">
+                {% for recipe in subscripts %}
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="card mb-3" style="max-width: 540px;">
+                            <div class="row g-0">
+                              <div id="cat-card" class="col-md-6">
+                                <img src="/images/{{recipe.img}}" style="display: inline-block; padding-left: 15px;" width='258.99px'
+                                height= '250px'>
+                              </div>
+                              <div id="cat-card" class="col-md-6">
+                                <div class="card-body">
+                                  <h5 class="card-title cen">{{recipe.title}}</h5>
+                                  <hr>
+    
+                                  <strong>Description:  </strong>{{recipe.description}}
+    
+                                <p><span><strong>Likes:   </strong>{{recipe.likes.count}}</span> </p>
+                                  <a href="recipe/{{recipe.id}}" class="btn btn-primary">View Recipe</a>                                    
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                {% endfor %}
+        </div>       
+    {% else %}
+    <h5 style="text-align: center;">No Results found for "{{value}}"</h5>
+
+
+    {% endif %}
+    </div>
+    
+
+
+
 
 {% endblock %}

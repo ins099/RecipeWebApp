@@ -25,6 +25,7 @@ class Recipe(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name="recipe_likes")
     dateposted = models.DateTimeField(auto_now_add= True)
     img = models.ImageField(blank=True, null =True, upload_to = 'recipeimages')
+
     def __str__(self):
         return self.title
 

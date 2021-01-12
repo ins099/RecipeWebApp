@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('', views.index, name = 'index'),
-    path('mostliked', views.MostLikeRecipeView.as_view(), name = 'mostliked'),
     path('recentrecipes', views.RecentRecipeView.as_view(), name = 'recentrecipes'),
     path('create', views.createrecipe, name='create'),    
     path("login", views.login_view, name="login"),
@@ -17,5 +16,6 @@ urlpatterns = [
     path('AllRecipe', views.AllRecipes, name = 'AllRecipe'),
     path('search', views.search, name='search'),
     path('edit/<int:recipeid>', views.Edit, name='edit'),
+    path('delete/<int:recipeid>', views.Delete, name='delete'),
 
 ]

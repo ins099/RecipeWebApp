@@ -1,9 +1,7 @@
-In order to runserver, please install the following with mentioned cli
+In order to run properly, please install the following
 
 1. Pillow
 	pip install Pillow
 
 2. Rest Framework
 	pip install djangorestframework
-	pip install markdown
-	pip install django-filter

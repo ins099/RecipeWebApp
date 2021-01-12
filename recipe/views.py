@@ -1,20 +1,18 @@
+
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError, models
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import generics, status
-from rest_framework.decorators import permission_classes
-from rest_framework import permissions
+from rest_framework import generics
 
 from .models import User, Recipe, Category, Following, Comment
 from .forms import NewRecipe, ProfPic
 from .serializers import RecipeSerializer
+from .decorators import unauthenticated_user
 
 # Create your views here.
 def index(request):
@@ -27,22 +25,6 @@ class RecentRecipeView(generics.ListAPIView):
     queryset = Recipe.objects.all().order_by('-dateposted')[:5]
     serializer_class = RecipeSerializer
 
-@permission_classes((permissions.AllowAny,))
-class MostLikeRecipeView(APIView):
-    serializer_class = RecipeSerializer
-
-    def get(self,request,format=None):
-        all = Recipe.objects.all()
-        all = all.values(*['id','author','title','description', 'ingredients','procedure','likes','img'])
-
-        for recipe in all:
-            r = Recipe.objects.get(title = recipe['title'])
-            r = r.likes.all().count()
-            recipe['likes'] = r
-
-        all = all.order_by('-likes')[:5]
-        return Response(all,status = status.HTTP_200_OK)
-
 def AllRecipes(request):
     recipes = Recipe.objects.all()
         
@@ -54,20 +36,17 @@ def AllRecipes(request):
 def search(request):
     if request.method == 'POST':
         s_item = request.POST.get('search')
-        allrecipes = Recipe.objects.all()
-        print(allrecipes)
+        allrecipes = Recipe.objects.values('title')
 
-        if Recipe.objects.filter(title = s_item).exists():
-            recipe = Recipe.objects.get(title = s_item)
-            return HttpResponseRedirect(reverse('recipeid', args = [recipe.id]))
-        else:
-            subscripts = []
-            for recipe in allrecipes:
-                if s_item.upper() in recipe.title.upper():
-                    subscripts.append(recipe)
+        substrings = []
+        for recipe in allrecipes:
+            if s_item.upper() in recipe['title'].upper():
+                result = get_object_or_404(Recipe,title = recipe['title'])
+                print(result)
+                substrings.append(result)
             
         return render (request, 'recipe/search.html',{
-                'subscripts':subscripts,
+                'subscripts':substrings,
                 "value": s_item,
 
             })
@@ -75,32 +54,14 @@ def search(request):
 @login_required
 def createrecipe(request):
     if request.method == 'POST':
-        form = NewRecipe(data=request.POST, files = request.FILES)
+        form = NewRecipe(data=request.POST, files=request.FILES)
         if form.is_valid():
             try:
-                title = form.cleaned_data['title']            
-                category_name = dict(form.fields['category'].choices)[int(form.cleaned_data["category"])]
-                description = form.cleaned_data['description']
-                ingredients = form.cleaned_data['ingredients']
-                procedure =  form.cleaned_data['procedure']
-                image = form.cleaned_data['img']
-                new_recipe = Recipe(title = title,
-                                    author = request.user,
-                                    description = description,
-                                    category = Category.objects.get(pk = category_name),
-                                    ingredients=ingredients,
-                                    procedure = procedure,
-                                    img = image,
-                                    )
-                #for edit save
-                if form.cleaned_data['edit']== True:
-                    new_recipe.save()
-                    return HttpResponseRedirect(reverse('recipeid', kwargs={'id':new_recipe.id}))
-
-                # for new recipe save
-                else:
-                    new_recipe.save()
-                    return HttpResponseRedirect(reverse('recipeid', kwargs={'id':new_recipe.id}))
+                
+                f = form.save(commit=False)
+                f.author = request.user
+                f.save()
+                return HttpResponseRedirect(reverse('recipeid', args= [f.id]))
                 
 
             except IntegrityError:
@@ -149,7 +110,7 @@ def userProfile(request,username):
         context['categories']=listcat()
 
         userP = User.objects.all().filter(username=username).first()
-        recipes = Recipe.objects.filter(author = userP).all()
+        recipes = Recipe.objects.filter(author = userP).all().order_by('-dateposted')
         followers = Following.objects.filter(following=userP).all().count()
         following = Following.objects.filter(follower = userP).all().count()
         existPhoto = get_object_or_404(User, username = username)
@@ -261,25 +222,32 @@ def CommentSubmit(request):
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
 
 def Edit(request, recipeid):
-    if request.method=='GET':
-        recipe = get_object_or_404(Recipe, pk = recipeid)
-        form = NewRecipe()
-        form.fields['title'].initial = recipe.title
-        form.fields['description'].initial = recipe.description
-        form.fields['ingredients'].initial = recipe.ingredients
-        form.fields['procedure'].initial = recipe.procedure
-        form.fields['category'].initial = recipe.category
-        form.fields['img'].initial = recipe.img
-        form.fields['edit'].initial = True
+    recipe = Recipe.objects.get(pk = recipeid)
+    form = NewRecipe(instance=recipe)
+    if request.method == 'POST':
+        form = NewRecipe(request.POST, request.FILES,instance = recipe)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('recipeid', args = [recipeid]))
 
-        return render(request, 'recipe/create.html',{
-            'form':form
-        })
+    return render(request, 'recipe/create.html',{
+        'form':form
+    })
 
+def Delete(request,recipeid):
+    recipe = Recipe.objects.get(id= recipeid)
+    if request.method == 'POST':
+        recipe.delete()
+        return HttpResponseRedirect(reverse('profile', args=[recipe.author]))
+
+    return render (request, 'recipe/delete.html', {
+        'item':recipe
+    })
 
 def listcat():
     categories = Category.objects.all()
     return categories
+@unauthenticated_user
 def login_view(request):
     if request.method == "POST":
 
@@ -301,6 +269,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+@unauthenticated_user
 def register(request):
     if request.method == "POST":
         mail = request.POST["email"]

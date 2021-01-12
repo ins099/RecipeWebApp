@@ -6,18 +6,22 @@
         <div class="row">
              <div class="col" style="margin-bottom: 10%;">
                  <div id="recipebox">
-                    {% if user.is_authenticated %}
-                    {% if request.user == recipe.author %}
-                        <a href="/edit/{{recipe.id}}"><button class="btn">Edit</button></a>
-                    {% endif %}
-                    {% endif %}
-
 
                      <h2 style="text-transform: uppercase;" class="cen">{{recipe.title}}</h2>
+                     
+                    {% if user.is_authenticated %}
+                    {% if request.user == recipe.author %}
+                        <p style="text-align: left; padding: 0 15px;"><a href="/edit/{{recipe.id}}">Edit</a>  || <a href="/delete/{{recipe.id}}">Delete</a>  </p>
+                    {% endif %}
+                    {% endif %}
                      <p style="text-align: left; padding: 0 15px;">Author:  <b><a href="/profile/{{recipe.author}}">{{recipe.author}}</a></b></p>
                      <p style="text-align: left; padding: 0 15px;">Category:  <b>{{recipe.category}}</b></p>
                      <p style="text-align: left; padding: 0 15px;">Date Posted:  {{recipe.dateposted.date}}</p>
-                     <img class="cen" src="/images/{{recipe.img}}" alt="{{recipe.title}}-img" height="500px">
+
+                    
+                        <img src="/images/{{recipe.img}}" class="img-fluid" alt="...">
+                     
+                     <!-- <img class="cen" src="/images/{{recipe.img}}" alt="{{recipe.title}}-img" height="500px"> -->
                      <div style="text-align: left;  padding: 0 15px;">
                         <h5>Description:</h5>
                         <p>{{recipe.description}}</p>
@@ -75,6 +79,5 @@
 </div>
 </div>
     
-<!-- Contact us -->
 
 {% endblock %}

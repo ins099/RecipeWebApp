@@ -120,6 +120,7 @@ function LikedRecipes() {
 					}	
 		)
 }
-
-RecentRecipes();
-LikedRecipes();
+document.addEventListener('DOMContentLoaded', function(){
+	RecentRecipes();
+	LikedRecipes();
+})

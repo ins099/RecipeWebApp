@@ -1,0 +1,15 @@
+{% extends 'recipe/layout.html' %}
+
+
+{% block body %}
+
+    <div class="container-fluid" style="text-align: center; padding-top: 10%;"> 
+        <p>Are you sure, You want to delete <b>{{item}}</b>?</p>
+    
+        <form action="{% url 'delete' item.id %}" method="POST">
+            {% csrf_token %}
+            <a href="/recipe/{{item.id}}"><button class="btn btn-secondary btn-sm">Cancel</button></a>
+            <button class="btn btn-primary btn-sm" type="submit"> Delete </button>
+        </form>
+    </div>
+{% endblock %}
