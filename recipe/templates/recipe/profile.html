@@ -1,53 +1,54 @@
 {% extends 'recipe/layout.html' %}
+
+{% block title %}
+<title>{{userProfile.first_name}} {{userProfile.last_name}}</title>
+{% endblock %}
+
+
 {% block body %}
     
     
-       <div class="container" style="padding-top: 5%;">
-           <div class="row" >
-               <div class="col-lg-4 col-sm-6 col-md-6">
-                    <div class="userinfobox" style="text-align: center;">
-                        <div>
-                            
-                            {% if user.is_authenticated %}
-                            {% if request.user == userProfile %}
-                            {% if exists == False %}
-                                <h5>{{message}}</h5>
-                            <form action="/profile/{{userProfile}}" method="POST" enctype="multipart/form-data">
-                                {%csrf_token%}
-                                {{form.as_p}}
-                                <input type="submit" value="Upload">
-                            </form>
-                            {%endif%}
-                            {%endif%}
-                            {%endif%}
-                            
-                        </div>
-                        <div>
-                            <a href="/images/{{userProfile.profile_pic}}"> 
-                                <img class="profile" src="/images/{{userProfile.profile_pic}}" alt="userpic" ></a>    
-                        </div>
-                        <h4 style="text-transform: uppercase;">{{userProfile.username}}</h4>
-                        <p><b>Email:</b> {{userProfile.email}}</p>
-                        <p><b>Following:</b> {{user_following}}</p>
-                        <p><b>Followers:</b> {{user_follower}}</p>          
-                        {% if user.is_authenticated %}
-                        {% if user.username != userProfile.username %}
-                            <form action="{% url 'follow' %}" method="POST">
-                                {%csrf_token%}
-                                <input type="submit" value="{{following_state}}">
-                                <input type="hidden" name = 'username' value="{{userProfile.username}}">
-                            </form>
-                        {% endif %}
-                        {% endif %}
+       <div class="container" style="padding-top: 2%;">
+        
+        <div class = 'row'>
+            <div class="userinfobox" style="text-align: center;">
+                <div>
+                    {% if exists == False %}
+
+                    <img class='profile' src="https://www.edgehill.ac.uk/health/files/2017/12/blank-profile.png">
+                    {% else %}
+                    <div>
+                        <a href="/images/{{userProfile.profile_pic}}"> 
+                            <img class="profile" src="/images/{{userProfile.profile_pic}}" alt="userpic" ></a>    
                     </div>
+                    {%endif%}
+                    
+                    
+                    {% if user.is_authenticated %}
+                    {% if exists == False %}
+                    {% if request.user == userProfile %}
+                    <form action="/profile/{{userProfile}}" method="POST" enctype="multipart/form-data">
+                        {%csrf_token%}
+                        {{form.profilephoto}}
+                        <input type="submit" value="Upload">
+                    </form>
                     <br>
-               </div>
-                <div class="col-lg-8 col-sm-6 col-md-6" style="text-align: center;">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col">
+                    {%endif%}
+                    {%endif%}
+                    {%endif%}
+                    
+                </div>
+                
+                <h4 style="text-transform: uppercase;">{{userProfile.first_name}}  {{userProfile.last_name}} </h4>
+                <p><b>Email:</b> {{userProfile.email}}</p>       
+            </div>
+            <br>
+        </div>
+
+        <div class="row" >
+                            <div class="col" style="text-align: center;">
                                 {% if norecipes %}
-                                    <h3><i>{{norecipes}}</i></h3>
+                                    <h5><i>{{norecipes}}</i></h5>
                                     {% if add %}
                                     <a href="/create">Add New</a>
                                     {% endif %}
@@ -73,11 +74,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    
-                </div>
-           </div>
-       </div>
 
 
 
