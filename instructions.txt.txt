@@ -1,7 +1,0 @@
-In order to run properly, please install the following
-
-1. Pillow
-	pip install Pillow
-
-2. Rest Framework
-	pip install djangorestframework

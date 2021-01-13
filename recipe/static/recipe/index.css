@@ -48,46 +48,15 @@
   -1px -1px 0 #000;
 }
 
-#recent-recipe, #mostliked-recipe{
-    height: 600px;
-    margin: 0;
-    padding: 50px;
-    text-align:center;
+#recent-recipe{
+    height: max-content;
+    padding: 3% 0;
+    text-align: center;
 }
 .card-container{
     text-align: center;
     padding: 20px;
 }
-h4{
-    margin: 0 0 100px 0;
-    font-size: 30px ;
-}
-footer{
-    position: absolute;
-    width: 100%;
-    height: 200px;
-    background-color: black;
-    text-align: center;
-    padding: 45px;
-    overflow: hidden;
-}
-footer>h6{
-    color:grey;
-}
-.fa {
-    padding: 15px;
-    font-size: 30px;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    text-decoration: none;
-  }
-
-.fa:hover {
-    opacity: 0.7;
-  }
-
-
   /* Create.html Styling */
 
 #form-div{
@@ -98,19 +67,6 @@ footer>h6{
 }
 
 
-  /* All Recipe.html Styling */
-
-  #main-allrecipe{
-      padding: 5% 5% 0;
-      margin: 0;
-      background-color: linen;
-  }
-
-.commentbox{
-    padding: 50px;
-    margin: 0;
-    border: black solid;
-}
 
   /* login.html -- register Styling */
 
@@ -155,14 +111,19 @@ footer>h6{
 .cen{
     text-align: center;
 }
-.but{
-    display: block;
-    width: 100%;
-}
 
 .profile{
     height: 200px;
     width: 200px;
-    border-radius: 100%;
-    margin-bottom: 5%;
+    border-radius: 100%;margin-bottom: 20px;
+    border-style: solid ;
+}
+
+#commentinputbox {
+    margin-top: 3%;
+}
+
+.like{
+    position: absolute;
+    left:30px;
 }
