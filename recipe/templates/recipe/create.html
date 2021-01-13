@@ -1,6 +1,11 @@
 {% extends 'recipe/layout.html' %}
 
 
+{% block title %}
+<title>Add Recipe</title>
+{% endblock %}
+
+
 {% block body %}
 
     {% if message %}
@@ -21,8 +26,8 @@
                                 <br>
                                 <h6>Description</h6>
                                 {{form.description}}
-                                <font size="1">(Maximum characters: 150)
-                                    You have <input readonly type="text" name="countdown" size="3" value="150"> characters left.</font>
+                                <font size="1">(Maximum characters: 250)
+                                    You have <input readonly type="text" name="countdown" size="3" value="250"> characters left.</font>
                                 <br>
                                 <h6>Ingredients</h6>
                                 {{form.ingredients}}

@@ -1,17 +1,25 @@
 {% extends 'recipe/layout.html' %}
 {% load static %}
 
+{% block title %}
+<title>Search '{{value}}'</title>
+{% endblock %}
+
+
 {% block body %}
 
 
 
     <div class="container-fluid" style="padding:5%">
 
-        {% if subscripts %}
-        <h5 style="text-align: center;">Showing Result for "{{value}}"</h5>
+{% if exists == 0 %}
+      <h5 style="text-align: center;">No Results found for "{{value}}"</h5>
+{% else %}
+
+      <h5 style="text-align: center; padding-bottom:3%;">Showing Result for "{{value}}"</h5>
 
         <div class="row">
-                {% for recipe in subscripts %}
+                {% for recipe in results %}
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="card mb-3" style="max-width: 540px;">
                             <div class="row g-0">
@@ -34,12 +42,8 @@
                           </div>
                     </div>
                 {% endfor %}
-        </div>       
-    {% else %}
-    <h5 style="text-align: center;">No Results found for "{{value}}"</h5>
-
-
-    {% endif %}
+        </div>   
+{% endif %}
     </div>
     
 
