@@ -17,13 +17,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Yrsa:wght@600&display=swap" rel="stylesheet">  
     <script src="{% static 'recipe/index.js' %}"></script>
-    <title>EVRYONE'S Online Recipe Web</title>
+    {% block title %}
+    {% endblock %}
   </head>
 
   <body>
     <div class="container-fluid" style="padding: 0 15%">
       <nav class="navbar navbar-light nav-bg-dark navbar-expand-lg justify-content-md-center justify-content-start">
-        <a class="navbar-brand d-inline" href="/">Food Network</a>
+        <a class="navbar-brand d-inline" href="/">Recipe Book</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar2" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -42,20 +43,17 @@
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item ">
                   <a class="nav-link" href="{% url 'index' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'AllRecipe' %}">All Recipes</a>
-                </li>        
+                </li>     
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Categories
+                    View By Cuisines
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     {% for cate in categories %}
                           <table   style="text-align: center;">
                               <th>
                                   <li class="dropdown-item">
-                                      <form action="{% url 'category' %}" method="POST">
+                                      <form action="{% url 'category' %}" method="">
                                           {% csrf_token %}
                                           <button class="btn btni" type="submit" name = 'category' value = "{{cate.cat}}">{{cate.cat}}</button>
                                           <input type="hidden" name = 'selected' value = "{{cate.cat}}">
@@ -70,9 +68,9 @@
         
                   <li class="nav-item dropdown active">
                     {% if not user.is_authenticated %}
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Join?</a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Signin / Register</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                      <a class="dropdown-item" href="{% url 'login' %}">Signin</a>
                       <a class="dropdown-item" href="{% url 'register' %}">Register</a>
                     </div>
                     
@@ -80,7 +78,7 @@
                     {%endif%}
                     {% if user.is_authenticated %}
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {{request.user}}
+                      Hello {{request.user.first_name}}!!
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <a class="dropdown-item" href="/profile/{{request.user}}">My Profile</a>
