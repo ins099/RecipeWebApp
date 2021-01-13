@@ -29,14 +29,6 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
-
-class Following(models.Model):
-	follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
-	following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
-
-	def __str__(self):
-		return f"{self.follower} -> {self.following}"
-
 class Comment(models.Model):
     recipepost= models.ForeignKey(Recipe, on_delete= models.CASCADE, related_name= 'comments')
     author = models.ForeignKey(User, on_delete= models.CASCADE, related_name = 'comments')

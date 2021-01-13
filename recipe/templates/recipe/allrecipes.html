@@ -1,16 +1,19 @@
 {% extends 'recipe/layout.html' %}
 
+{% block title %}
+<title>More Recipes</title>
+{% endblock %}
 
 {% block body %}
 <div class="container-fluid" style="padding:5%">
-    <h1 style="text-align: center; padding-bottom: 5%;">All Recipes</h1>
+    <h1 style="text-align: center; padding-bottom: 5%;">More Recipes</h1>
     <div class="row" style="padding-left:5% ;">
             {% for recipe in recipes %}
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                           <div id="cat-card" class="col-md-6">
-                            <img src="/images/{{recipe.img}}" style="display: inline-block; padding-left: 15px;" width='258.99px'
+                            <img src="/images/{{recipe.img}}" style="display: inline-block; padding-left: 15px; margin: 15% 0 0;" width='258.99px'
                             height= '250px'>
                           </div>
                           <div id="cat-card" class="col-md-6">

@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from rest_framework import generics
 
-from .models import User, Recipe, Category, Following, Comment
+from .models import User, Recipe, Category, Comment
 from .forms import NewRecipe, ProfPic
 from .serializers import RecipeSerializer
 from .decorators import unauthenticated_user
@@ -26,7 +26,7 @@ class RecentRecipeView(generics.ListAPIView):
     serializer_class = RecipeSerializer
 
 def AllRecipes(request):
-    recipes = Recipe.objects.all()
+    recipes = Recipe.objects.all().order_by('-dateposted')
         
     return render(request, 'recipe/allrecipes.html', {
         'recipes':recipes,
@@ -35,21 +35,16 @@ def AllRecipes(request):
 
 def search(request):
     if request.method == 'POST':
-        s_item = request.POST.get('search')
-        allrecipes = Recipe.objects.values('title')
-
-        substrings = []
-        for recipe in allrecipes:
-            if s_item.upper() in recipe['title'].upper():
-                result = get_object_or_404(Recipe,title = recipe['title'])
-                print(result)
-                substrings.append(result)
-            
-        return render (request, 'recipe/search.html',{
-                'subscripts':substrings,
-                "value": s_item,
-
+        s_value = request.POST.get('search')
+        if s_value:
+            results = Recipe.objects.filter(title__contains = s_value)
+            return render (request, 'recipe/search.html', {
+                'value':s_value,
+                'results':results,
+                'exists': len(results),
+                'categories':listcat()
             })
+
 
 @login_required
 def createrecipe(request):
@@ -82,15 +77,14 @@ def createrecipe(request):
 
 def ListCategory(request):
     context = {}
-    if request.method == 'POST':
-        category = Category.objects.get(pk = request.POST['selected'])
-        context['category'] = category
-        context['recipes'] = category.recipes.all()
+    category = Category.objects.get(pk = request.GET.get('selected'))
+    context['category'] = category
+    context['recipes'] = category.recipes.all()
     context['categories'] = Category.objects.all()
     return render (request, 'recipe/category.html', context)     
 
 def RecipeView(request, id):
-    recipe = Recipe.objects.get(pk = id)
+    recipe = get_object_or_404(Recipe,pk = id)
     print(recipe.comments.all())
 
     likes = []
@@ -111,8 +105,6 @@ def userProfile(request,username):
 
         userP = User.objects.all().filter(username=username).first()
         recipes = Recipe.objects.filter(author = userP).all().order_by('-dateposted')
-        followers = Following.objects.filter(following=userP).all().count()
-        following = Following.objects.filter(follower = userP).all().count()
         existPhoto = get_object_or_404(User, username = username)
         existPhoto = str(existPhoto.profile_pic)
         print(len(existPhoto))
@@ -139,8 +131,6 @@ def userProfile(request,username):
         if len(recipes) != 0: 
             context['recipes'] = recipes
             context['userProfile'] = userP
-            context['user_follower'] = followers
-            context['user_following'] = following
             context['categories'] = listcat()
             context['comments'] = Comment.objects.all()
             
@@ -150,19 +140,10 @@ def userProfile(request,username):
             
             context['likes']=likes[0]
 
-            if request.user.is_authenticated:
-                following_status = Following.objects.filter(follower=request.user, following= userP)
-                if len(following_status) == 0:
-                    context['following_state']= 'Follow'
-                else:
-                    context['following_state']= 'UnFollow'
-
             return render (request, 'recipe/profile.html',context)
         else:
             context['recipes'] = recipes
             context['userProfile'] = userP
-            context['user_follower'] = followers
-            context['user_following'] = following
             
             if request.user != userP:
                 context['norecipes'] = f"{username.upper()} has No recipes yet!!"
@@ -170,28 +151,10 @@ def userProfile(request,username):
                 context['norecipes'] = f" You donot have any recipes yet!!"
                 context['add'] = True
 
-            if request.user.is_authenticated:
-                following_status = Following.objects.filter(follower=request.user, following= userP)
-                if len(following_status) == 0:
-                    context['following_state']= 'Follow'
-                else:
-                    context['following_state']= 'UnFollow'
 
             return render (request, 'recipe/profile.html',context)
     else:
         return HttpResponseNotFound()
-
-def Follow(request):
-    if request.method == 'POST':
-        person_to_follow = User.objects.filter(username = request.POST['username']).first()
-        following_status = Following.objects.all().filter(models.Q(follower=request.user, following=person_to_follow))
-        if len(following_status) == 0:
-            new_state = Following(follower=request.user, following=person_to_follow)
-            new_state.save()
-        else:
-            Following.objects.get(follower=request.user, following=person_to_follow).delete()
-
-        return HttpResponseRedirect(reverse("profile", args=[request.POST["username"]]))
 
 def like(request):
     if request.method == 'POST':
@@ -207,6 +170,7 @@ def like(request):
 
         return HttpResponseRedirect(reverse('recipeid', args=[request.POST['like']]))
 
+@login_required
 def CommentSubmit(request):
     if request.method == 'POST':
         recipe = Recipe.objects.get(pk = request.POST['recipeid'])
@@ -221,6 +185,7 @@ def CommentSubmit(request):
 
         return HttpResponseRedirect(reverse('recipeid', args = [request.POST['recipeid']]))
 
+@login_required
 def Edit(request, recipeid):
     recipe = Recipe.objects.get(pk = recipeid)
     form = NewRecipe(instance=recipe)
@@ -234,6 +199,7 @@ def Edit(request, recipeid):
         'form':form
     })
 
+@login_required
 def Delete(request,recipeid):
     recipe = Recipe.objects.get(id= recipeid)
     if request.method == 'POST':
@@ -247,6 +213,7 @@ def Delete(request,recipeid):
 def listcat():
     categories = Category.objects.all()
     return categories
+
 @unauthenticated_user
 def login_view(request):
     if request.method == "POST":
@@ -266,9 +233,11 @@ def login_view(request):
             })
     else:
         return render(request, "recipe/login.html")
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
 @unauthenticated_user
 def register(request):
     if request.method == "POST":
